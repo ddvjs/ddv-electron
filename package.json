@@ -1,6 +1,6 @@
 {
   "bin": {
-    "ddvcms": "./bin/ddv-electron",
+    "ddvelectron": "./bin/ddv-electron",
     "ddv-electron": "./bin/ddv-electron"
   },
   "bugs": {
@@ -21,6 +21,7 @@
     "electron-builder": "^20.8.1",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.3",
+    "is-windows": "^1.0.0",
     "ddv-cms": ">=0"
   },
   "deprecated": false,
