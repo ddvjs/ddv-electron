@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+'use strict'
+// 标题
+process.title = 'ddvElectronBin'
+const path = require('path')
+const argv = require('../lib/argv')
+const logger = require('../lib/logger')
+const config = require('../lib/config')
+const electron = require('electron')
+const { Nuxt, Builder } = require('nuxt')
+const { spawn } = require('child_process')
+let electronProcess = null
+let manualRestart = false
+
+run()
+
+function run () {
+  logger.log(`cmd ${argv.cmd}`)
+  logger.log(`port ${argv.port}`)
+  logger.log(`isDev ${argv.dev}`)
+  logger.log(`analyze ${argv.analyze}`)
+  logger.log(`rootDir ${argv.rootDir}`)
+  logger.log(`configFile ${argv.configFile}`)
+  // 编译模式
+  if (argv.cmd === 'build') {
+    logger.log('[nuxt] Building...') // eslint-disable-line no-console
+    buildElectron()
+  } else if (argv.cmd === 'dev' || argv.cmd === 'start') {
+    startElectron(config)
+  } else {
+    logger.error('This parameter is not supported')
+    process.exit(1)
+  }
+}
+
+function buildElectron () {
+  config(argv.configFile, argv).then(options => {
+    const nuxt = new Nuxt(options)
+    const builder = new Builder(nuxt)
+    builder.build()
+    .then(() => {
+      logger.log('[nuxt] Building done') // eslint-disable-line no-console
+    })
+    .catch((err) => {
+      logger.error(err) // eslint-disable-line no-console
+      process.exit(1)
+    })
+  })
+}
+
+function startElectron (config) {
+  electronProcess = spawn(electron,
+    [
+      '--inspect=5858',
+      path.join(__dirname, '../')
+    ],
+    {
+      stdio: 'inherit' //,
+      // env:
+    }
+    )
+
+  process.on('SIGTERM', function () {
+    return electronProcess.kill('SIGTERM')
+  })
+  process.on('SIGINT', function () {
+    return electronProcess.kill('SIGINT')
+  })
+  process.on('SIGBREAK', function () {
+    return electronProcess.kill('SIGBREAK')
+  })
+  process.on('SIGHUP', function () {
+    return electronProcess.kill('SIGHUP')
+  })
+  electronProcess.on('exit', process.exit)
+  electronProcess.on('close', () => {
+    if (!manualRestart) process.exit()
+  })
+}
