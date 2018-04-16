@@ -11,8 +11,10 @@ logger.log(`cmd ${argv.cmd}`)
 logger.log(`port ${argv.port}`)
 logger.log(`isDev ${argv.dev}`)
 logger.log(`analyze ${argv.analyze}`)
-logger.log(`rootDir ${argv.rootDir}`)
-logger.log(`configFile ${argv.configFile}`)
+logger.log(`root-dir ${argv['root-dir']}`)
+logger.log(`config-file ${argv['config-file']}`)
+// 调试模式
+process.env.NODE_ENV = argv.dev ? 'development' : 'production'
 // 编译模式
 if (argv.cmd === 'build') {
   logger.log('[nuxt] Building...') // eslint-disable-line no-console
