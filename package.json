@@ -17,7 +17,7 @@
     }
   ],
   "dependencies": {
-    "electron": "~2.0.0",
+    "electron": "2.0.0",
     "electron-builder": "~20.11.1",
     "electron-debug": "~1.5.0",
     "electron-updater": "~2.21.10",
